@@ -1,0 +1,16 @@
+---
+# Offline install PowerShellGet
+- name: Copy files
+  ansible.windows.win_copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - src: ../files/PackageManagement.zip
+      dest: C:\PackageManagement.zip
+    - src: ../files/PowerShellGet.zip
+      dest: C:\PowerShellGet.zip
+    - src: ../files/psg.ps1
+      dest: C:\psg.ps1
+
+- name: Install modules
+  ansible.windows.win_command: powershell.exe -File C:\psg.ps1

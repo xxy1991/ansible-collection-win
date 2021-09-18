@@ -1,0 +1,12 @@
+---
+# Admin$ is required
+- name: "Enable WinRM"
+  local_action:
+    module: community.windows.psexec
+    hostname: "{{ psexec_host }}"
+    connection_username: "{{ psexec_username }}"
+    connection_password: "{{ psexec_password }}"
+    executable: powershell.exe
+    arguments: Enable-PSRemoting -Force
+  tags:
+    - initialize

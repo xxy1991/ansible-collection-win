@@ -1,0 +1,14 @@
+---
+# WinRM is required
+- name: "Enable CredSSP"
+  vars:
+    ansible_winrm_transport: ntlm
+  ansible.windows.win_powershell:
+    script: |
+      $credsspAuthSetting = Get-ChildItem WSMan:\localhost\Service\Auth |
+        Where-Object { $_.Name -eq "CredSSP" }
+      If (($credsspAuthSetting.Value) -eq $false) {
+        Enable-WSManCredSSP -Role "Server" -Force
+      }
+  tags:
+    - initialize

@@ -1,0 +1,5 @@
+---
+# WinRM vars
+psexec_host: ""
+psexec_username: ""
+psexec_password: ""
