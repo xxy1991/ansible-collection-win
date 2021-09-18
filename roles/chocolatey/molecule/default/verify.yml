@@ -1,0 +1,9 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: Verify chocolatey
+      ansible.builtin.stat:
+        path: C:\ProgramData\chocolatey
+      register: chocolatey_exists
