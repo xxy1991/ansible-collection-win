@@ -3,11 +3,6 @@ dependency:
   name: galaxy
 driver:
   name: docker
-# lint: |
-#  set -e
-#  yamllint .
-#  ansible-lint
-#  flake8
 platforms:
   - name: "molecule-${MOLECULE_DISTRO:-debian}-chocolatey"
     image: "xxy1991/${MOLECULE_DISTRO:-debian}:ansible"
