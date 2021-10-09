@@ -1,0 +1,23 @@
+---
+- name: Download vscode
+  ansible.windows.win_get_url:
+    url: "{{ vscode_download_url | default(default.vscode.download_url + vscode.install.type) }}"
+    dest: "{{ vscode.install.path }}\\VSCode-win32-x64.zip"
+  async: 600
+  poll: 0
+  register: vscode_downloaded
+
+- name: Wait for downloading
+  async_status:
+    jid: '{{ vscode_downloaded.ansible_job_id }}'
+  register: vscode_download_result
+  until: vscode_download_result.finished
+  retries: 60
+  delay: 10
+
+- name: Install vscode
+  community.windows.win_unzip:
+    src: "{{ vscode_download_result.dest }}"
+    dest: "{{ vscode.install.path }}"
+    delete_archive: true
+  when: vscode_downloaded is succeeded

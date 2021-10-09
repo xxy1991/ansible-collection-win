@@ -1,0 +1,8 @@
+---
+# Visual Studio Code default options
+default:
+  vscode:
+    download_url: "https://code.visualstudio.com/sha/download?os=win32-x64-archive&build="
+    install:
+      type: stable
+      path: D:\\portable\vscode

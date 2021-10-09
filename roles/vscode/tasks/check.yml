@@ -1,0 +1,21 @@
+---
+- name: Check system
+  ansible.builtin.assert:
+    that: ansible_os_family == "Windows"
+
+- name: Check app path
+  ansible.windows.win_stat:
+    path: "{{ vscode.install.path }}"
+  register: vscode_path_exists
+
+- name: Check app exists
+  ansible.windows.win_stat:
+    path: "{{ vscode.install.path }}\\Code.exe"
+  register: vscode_exists
+  when: vscode_path_exists.stat.exists
+
+- name: Check app exists
+  ansible.windows.win_stat:
+    path: "{{ vscode.install.path }}\\Code - Insiders.exe"
+  register: vscodei_exists
+  when: vscode_path_exists.stat.exists

@@ -1,0 +1,40 @@
+---
+- name: Check platform
+  ansible.windows.win_stat:
+    path: "{{ portable.install_path }}\\Start.exe"
+  register: platform_exists
+
+- ansible.builtin.ping:
+    data: "{{ portable.resource_url }}/portable/{{ portable_app_archive }}"
+  register: vscode_download_url_immediate
+  delegate_to: localhost
+
+- ansible.builtin.ping:
+    data: "{{ portable_app_path }}"
+  register: vscode_path_immediate
+  delegate_to: localhost
+
+- name: Install vscode
+  vars:
+    vscode_download_url: "{{ vscode_download_url_immediate.ping }}"
+    vscode_install_path: "{{ vscode_path_immediate.ping }}"
+  ansible.builtin.include_role:
+    name: vscode
+  register: vscode_installed
+
+- name: Check data path
+  ansible.windows.win_file:
+    path: "{{ portable_app_path }}\\data"
+    state: directory
+  when: vscode_prepare is succeeded and
+    vscode_prepare is not skipped
+
+- name: Create SymbolicLink
+  ansible.windows.win_command: 'cmd.exe /k mklink "{{ item.target }}" "{{ item.src }}"'
+  loop: "{{ portable_app_links }}"
+  become: yes
+  become_method: runas
+  become_user: "{{ ansible_user }}"
+  when: vscode_prepare is succeeded and
+    vscode_prepare is not skipped and
+    portable_app_links is defined

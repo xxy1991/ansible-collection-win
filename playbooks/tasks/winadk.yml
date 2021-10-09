@@ -1,0 +1,61 @@
+---
+- name: Check adk path
+  vars:
+    program_path: "{{ ansible_env['ProgramFiles(x86)'] }}"
+  ansible.windows.win_stat:
+    path: "{{ program_path }}\\Windows Kits\\10\\Assessment and Deployment Kit"
+  register: adk_path_exists
+
+- name: Create temporary file
+  ansible.windows.win_tempfile:
+    state: file
+    suffix: .zip
+  register: adk_temp_file
+  when: not adk_path_exists.stat.exists
+
+- name: Download archive
+  ansible.windows.win_get_url:
+    url: "{{ adk_resource_url }}/large/WinADK-10-2004.zip"
+    dest: "{{ adk_temp_file.path }}"
+    checksum_algorithm: sha256
+    checksum_url: "{{ adk_resource_url }}/large/large.sha256"
+  register: adk_downloaded
+  when: adk_temp_file is succeeded and
+    adk_temp_file is not skipped
+
+- name: Create temporary directory
+  ansible.windows.win_tempfile:
+    state: directory
+  register: adk_temp_directory
+  when: adk_downloaded is succeeded and
+    adk_downloaded is not skipped
+
+- name: Expand archive
+  community.windows.win_unzip:
+    src: "{{ adk_downloaded.dest }}"
+    dest: "{{ adk_temp_directory.path }}"
+    delete_archive: true
+  register: adk_expanded
+  when: adk_temp_directory is succeeded and
+    adk_temp_directory is not skipped
+
+- name: Install adk
+  ansible.windows.win_command: >-
+    "{{ adk_temp_directory.path }}\ADK\adksetup.exe"
+    /quiet /features
+    OptionId.DeploymentTools
+    OptionId.ImagingAndConfigurationDesigner
+    OptionId.ICDConfigurationDesigner
+    OptionId.UserStateMigrationTool
+  register: adk_installed
+  when: adk_expanded is succeeded and
+    adk_expanded is not skipped
+
+- name: Install adk pe
+  ansible.windows.win_command: >-
+    "{{ adk_temp_directory.path }}\ADKWinPEAddons\adkwinpesetup.exe"
+    /quiet /features
+    OptionId.WindowsPreinstallationEnvironment
+  register: adk_pe_installed
+  when: adk_installed is succeeded and
+    adk_installed is not skipped

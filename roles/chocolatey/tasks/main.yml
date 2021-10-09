@@ -1,14 +1,14 @@
 ---
-- name: "Check system"
+- name: Check system
   ansible.builtin.assert:
     that: ansible_os_family == "Windows"
 
-- name: "Check chocolatey"
-  ansible.builtin.stat:
+- name: Check chocolatey
+  ansible.windows.win_stat:
     path: C:\ProgramData\chocolatey
   register: chocolatey_exists
 
-- name: 'Install chocolatey'
+- name: Install chocolatey
   ansible.windows.win_powershell:
     script: |
       Set-ExecutionPolicy Bypass -Scope Process -Force;

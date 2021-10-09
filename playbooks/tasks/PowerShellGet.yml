@@ -1,0 +1,31 @@
+---
+- name: Check NuGet
+  ansible.windows.win_powershell:
+    script: |
+      Get-PackageProvider -Name NuGet
+  register: nuget_version
+
+- name: Update NuGet
+  ansible.windows.win_powershell:
+    script: |
+      Get-PackageProvider -Name NuGet
+  register: nuget_version
+  when: nuget_version is succeeded and
+    nuget_version.output[0].Version.Major < 3
+
+- name: Check NuGet
+  ansible.windows.win_powershell:
+    script: |
+      Get-InstalledModule -Name PowerShellGet
+  register: psget_version
+
+- name: Update PowerShellGet
+  ansible.windows.win_powershell:
+    script: |
+      Install-Module -Name PowerShellGet -Force {{  }} | Out-Null
+  register: nuget_version
+  when: psget_version is succeeded and
+    psget_version.output[0].Version.Major < 2
+
+
+- debug: msg="{{ nuget_version.output[0].Version.Major }}"

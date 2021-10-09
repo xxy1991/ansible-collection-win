@@ -1,0 +1,20 @@
+---
+- name: Install portable apps
+  vars:
+    portable_install_platform: true
+    portable_install_packages:
+      - cpuz
+      - notepadpp
+      - ultraiso
+      - bulkfilechanger
+      - esedatabaseview
+      - foldertimeupdate
+      - bcompare
+      - dismpp
+      - hashtools
+      - jd_gui
+      - luyten
+      - shadowsocks
+      - vscode
+  ansible.builtin.include_role:
+    name: xxy1991.win.portable

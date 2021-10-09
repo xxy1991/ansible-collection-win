@@ -1,0 +1,30 @@
+---
+- name: Check platform
+  ansible.windows.win_stat:
+    path: "{{ portable.install_path }}\\Start.exe"
+  register: platform_exists
+
+- name: Check install path
+  ansible.windows.win_file:
+    path: "{{ portable.install_path }}"
+    state: directory
+  register: platform_install_path_exists
+  when: not platform_exists.stat.exists
+
+- name: Download platform
+  ansible.windows.win_get_url:
+    url: "{{ portable.resource_url }}/portable/portable.zip"
+    dest: "{{ portable.install_path }}\\portable.zip"
+    checksum_algorithm: sha256
+    checksum_url: "{{ portable.resource_url }}/portable/portable.sha256"
+  register: platform_downloaded
+  when: not platform_exists.stat.exists and
+    platform_install_path_exists is succeeded
+
+- name: Install platform
+  community.windows.win_unzip:
+    src: "{{ platform_downloaded.dest }}"
+    dest: "{{ portable.install_path }}"
+    delete_archive: true
+  when: not platform_exists.stat.exists and
+    platform_downloaded is succeeded

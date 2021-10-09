@@ -1,0 +1,8 @@
+---
+# portable default options:
+default:
+  portable:
+    resource_url: https://oss.xxy.fyi
+    install_path: D:\portable
+    install_platform: true
+    install_packages: []

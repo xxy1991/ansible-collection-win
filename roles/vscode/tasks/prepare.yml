@@ -1,0 +1,10 @@
+---
+#- name: Check download_url
+#  ansible.builtin.debug:
+#    var: vscode.download_url
+
+- name: Check install path
+  ansible.windows.win_file:
+    path: "{{ vscode.install.path }}"
+    state: directory
+  register: vscode_install_path_exists

@@ -1,0 +1,14 @@
+---
+# TODO
+- name: Check scoop
+  ansible.windows.win_stat:
+    path: "C:\\Program Files\\scoop"
+  register: scoop_exists
+
+- name: Install scoop
+  ansible.windows.win_powershell:
+    script: |
+      $env:SCOOP = "$env:ProgramFiles\scoop"
+      [environment]::setEnvironmentVariable('SCOOP', $env:SCOOP, 'Machine')
+      iwr -useb get.scoop.sh | iex
+  when: not scoop_exists

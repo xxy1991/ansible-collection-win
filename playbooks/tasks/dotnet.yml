@@ -1,0 +1,9 @@
+---
+# TODO
+- name: Download app archive
+  ansible.windows.win_get_url:
+    url: https://download.visualstudio.microsoft.com/download/pr/aa5eedba-8906-4e2b-96f8-1b4f06187460/e6757becd35f67b0897bcdda44baec93/dotnet-sdk-5.0.401-win-x64.exe
+    dest: "{{ dotnet_temp_file.path }}"
+    checksum_algorithm: sha512
+    checksum_url: 68bed347233eed63efae7df7359d2af8d4c1eeeaf008de8f0979bc7ee9f7c21da427802feb96d9763a85270763c0fa1e2e4baba8b9550a8748435ee49fc68106
+  register:  dotnet_downloaded

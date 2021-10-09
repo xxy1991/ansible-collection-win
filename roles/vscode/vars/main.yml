@@ -1,0 +1,7 @@
+---
+# Visual Studio Code options
+vscode:
+  #download_url: "{{ vscode_download_url | default(default.vscode.download_url+vscode.install.type) }}"
+  install:
+    type: "{{ vscode_install_type | default(default.vscode.install.type) }}"
+    path: "{{ vscode_install_path | default(default.vscode.install.path) }}"

@@ -1,0 +1,44 @@
+---
+- name: Check app path
+  ansible.windows.win_stat:
+    path: "{{ portable_app_path }}"
+  register: portable_app_path_exists
+  when: platform_exists.stat.exists
+
+- name: Download app archive
+  ansible.windows.win_get_url:
+    url: "{{ portable.resource_url }}/portable/{{ portable_app_archive }}"
+    dest: "{{ portable.install_path }}\\{{ portable_app_archive }}"
+    checksum_algorithm: sha256
+    checksum_url: "{{ portable.resource_url }}/portable/portable.sha256"
+  register:  portable_app_downloaded
+  when: platform_exists.stat.exists and
+    not portable_app_path_exists.stat.exists
+
+- name: Install app
+  community.windows.win_unzip:
+    src: "{{ portable_app_downloaded.dest }}"
+    dest: "{{ portable_app_path }}"
+    delete_archive: true
+  register: portable_app_installed
+  when: platform_exists.stat.exists and
+    not portable_app_path_exists.stat.exists and
+    portable_app_downloaded is succeeded
+
+- name: Check link path
+  ansible.windows.win_file:
+    path: "{{ portable.install_path }}\\PortableApps\\standalone"
+    state: directory
+  when: portable_app_installed is succeeded and
+    portable_app_installed is not skipped and
+    portable_app_links is defined
+
+- name: Create SymbolicLink
+  ansible.windows.win_command: 'cmd.exe /k mklink "{{ item.target }}" "{{ item.src }}"'
+  loop: "{{ portable_app_links }}"
+  become: yes
+  become_method: runas
+  become_user: "{{ ansible_user }}"
+  when: portable_app_installed is succeeded and
+    portable_app_installed is not skipped and
+    portable_app_links is defined

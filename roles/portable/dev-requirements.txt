@@ -1,0 +1,6 @@
+ansible
+pywinrm[credssp]
+pypsexec
+molecule
+molecule-docker
+yamllint

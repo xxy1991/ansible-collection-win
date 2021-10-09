@@ -1,0 +1,13 @@
+---
+- include_tasks: check.yml
+
+- include_tasks: prepare.yml
+  register: vscode_prepare
+  when: (vscode_exists is skipped or
+    not vscode_exists.stat.exists) and
+    (vscodei_exists is skipped or
+    not vscodei_exists.stat.exists)
+
+- include_tasks: install.yml
+  when: vscode_prepare is succeeded and
+    vscode_prepare is not skipped

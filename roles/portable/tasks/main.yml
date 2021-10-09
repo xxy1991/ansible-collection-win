@@ -1,0 +1,138 @@
+---
+- name: Check system
+  ansible.builtin.assert:
+    that: ansible_os_family == "Windows"
+
+- ansible.builtin.include_tasks: platform.yml
+  when: portable.install_platform
+
+- name: Check platform
+  ansible.windows.win_stat:
+    path: "{{ portable.install_path }}\\Start.exe"
+  register: platform_exists
+
+- ansible.builtin.ping:
+    data: "{{ portable.install_path }}\\PortableApps\\standalone"
+  register: portable_standalone_path
+  delegate_to: localhost
+
+- ansible.builtin.include_tasks: common.yml
+  vars:
+    portable_app_name: "cpuz"
+    portable_app_path: "{{ portable.install_path }}\\PortableApps\\CPU-ZPortable"
+    portable_app_archive: "CPU-ZPortable_1.97_English.zip"
+  when: "'cpuz' in portable.install_packages"
+
+- ansible.builtin.include_tasks: common.yml
+  vars:
+    portable_app_name: "notepadpp"
+    portable_app_path: "{{ portable.install_path }}\\PortableApps\\Notepad++Portable"
+    portable_app_archive: "NotepadPlusPlusPortable_8.1.5.zip"
+  when: "'notepadpp' in portable.install_packages"
+
+- ansible.builtin.include_tasks: common.yml
+  vars:
+    portable_app_name: "ultraiso"
+    portable_app_path: "{{ portable.install_path }}\\PortableApps\\UltraISOPortable"
+    portable_app_archive: "UltraISOPortable_9.7.1.3519.zip"
+  when: "'ultraiso' in portable.install_packages"
+
+- ansible.builtin.include_tasks: common.yml
+  vars:
+    portable_app_name: "bulkfilechanger"
+    portable_app_path: "{{ portable.install_path }}\\apps\\bulkfilechanger"
+    portable_app_archive: "bulkfilechanger-x64.zip"
+    portable_app_links:
+      - src: "{{ portable_app_path }}\\BulkFileChanger.exe"
+        target: "{{ portable_standalone_path.ping }}\\BulkFileChanger.exe"
+  when: "'bulkfilechanger' in portable.install_packages"
+
+- ansible.builtin.include_tasks: common.yml
+  vars:
+    portable_app_name: "esedatabaseview"
+    portable_app_path: "{{ portable.install_path }}\\apps\\esedatabaseview"
+    portable_app_archive: "esedatabaseview.zip"
+    portable_app_links:
+      - src: "{{ portable_app_path }}\\ESEDatabaseView.exe"
+        target: "{{ portable_standalone_path.ping }}\\ESEDatabaseView.exe"
+  when: "'esedatabaseview' in portable.install_packages"
+
+- ansible.builtin.include_tasks: common.yml
+  vars:
+    portable_app_name: "foldertimeupdate"
+    portable_app_path: "{{ portable.install_path }}\\apps\\foldertimeupdate"
+    portable_app_archive: "foldertimeupdate-x64.zip"
+    portable_app_links:
+      - src: "{{ portable_app_path }}\\FolderTimeUpdate.exe"
+        target: "{{ portable_standalone_path.ping }}\\FolderTimeUpdate.exe"
+  when: "'foldertimeupdate' in portable.install_packages"
+
+- ansible.builtin.include_tasks: common.yml
+  vars:
+    portable_app_name: "bcompare"
+    portable_app_path: "{{ portable.install_path }}\\apps\\bc4"
+    portable_app_archive: "BCompare-zh-4.4.0.25886.zip"
+    portable_app_links:
+      - src: "{{ portable_app_path }}\\BCompare.exe"
+        target: "{{ portable_standalone_path.ping }}\\BCompare.exe"
+  when: "'bcompare' in portable.install_packages"
+
+- ansible.builtin.include_tasks: common.yml
+  vars:
+    portable_app_name: "dismpp"
+    portable_app_path: "{{ portable.install_path }}\\apps\\dismpp"
+    portable_app_archive: "Dismpp10.1.1002.1.zip"
+    portable_app_links:
+      - src: "{{ portable_app_path }}\\Dism++x64.exe"
+        target: "{{ portable_standalone_path.ping }}\\Dism++x64.exe"
+  when: "'dismpp' in portable.install_packages"
+
+- ansible.builtin.include_tasks: common.yml
+  vars:
+    portable_app_name: "hashtools"
+    portable_app_path: "{{ portable.install_path }}\\apps\\HashTools"
+    portable_app_archive: "HashTools-4.3c.zip"
+    portable_app_links:
+      - src: "{{ portable_app_path }}\\HashTools.exe"
+        target: "{{ portable_standalone_path.ping }}\\HashTools.exe"
+  when: "'hashtools' in portable.install_packages"
+
+- ansible.builtin.include_tasks: common.yml
+  vars:
+    portable_app_name: "jd_gui"
+    portable_app_path: "{{ portable.install_path }}\\apps\\jd-gui"
+    portable_app_archive: "jd-gui-windows-1.6.6.zip"
+    portable_app_links:
+      - src: "{{ portable_app_path }}\\jd-gui.exe"
+        target: "{{ portable_standalone_path.ping }}\\jd-gui.exe"
+  when: "'jd_gui' in portable.install_packages"
+
+- ansible.builtin.include_tasks: common.yml
+  vars:
+    portable_app_name: "luyten"
+    portable_app_path: "{{ portable.install_path }}\\apps\\luyten"
+    portable_app_archive: "luyten-0.5.4.zip"
+    portable_app_links:
+      - src: "{{ portable_app_path }}\\luyten-0.5.4.exe"
+        target: "{{ portable_standalone_path.ping }}\\luyten-0.5.4.exe"
+  when: "'luyten' in portable.install_packages"
+
+- ansible.builtin.include_tasks: common.yml
+  vars:
+    portable_app_name: "shadowsocks"
+    portable_app_path: "{{ portable.install_path }}\\apps\\Shadowsocks"
+    portable_app_archive: "Shadowsocks-4.4.0.185.zip"
+    portable_app_links:
+      - src: "{{ portable_app_path }}\\Shadowsocks.exe"
+        target: "{{ portable_standalone_path.ping }}\\Shadowsocks.exe"
+  when: "'shadowsocks' in portable.install_packages"
+
+- ansible.builtin.include_tasks: vscode.yml
+  vars:
+    portable_app_name: "vscode"
+    portable_app_path: "{{ portable.install_path }}\\apps\\vscode"
+    portable_app_archive: "VSCode-win32-x64-1.60.2.zip"
+    portable_app_links:
+      - src: "{{ portable_app_path }}\\Code.exe"
+        target: "{{ portable_standalone_path.ping }}\\Code.exe"
+  when: "'vscode' in portable.install_packages"

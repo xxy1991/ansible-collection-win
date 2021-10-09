@@ -1,0 +1,13 @@
+---
+- name: KMS activate
+  vars:
+    slmgr_path: "{{ ansible_env['windir'] }}\\system32\\slmgr.vbs"
+  ansible.windows.win_powershell:
+    script: |
+      $licenseStatus=(Get-CimInstance -ClassName SoftwareLicensingProduct `
+        -Filter "Name like 'Windows%'" ` | where PartialProductKey).LicenseStatus
+      if ($licenseStatus -ne 1) {
+        cscript {{ slmgr_path }} /ipk {{ win_ipk }}
+        cscript {{ slmgr_path }} /skms {{ kms_server }}
+        cscript {{ slmgr_path }} /ato
+      }

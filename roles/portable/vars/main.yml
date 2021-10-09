@@ -1,0 +1,7 @@
+---
+# portable options:
+portable:
+  resource_url: "{{ portable_resource_url | default(default.portable.resource_url) }}"
+  install_path: "{{ portable_install_path | default(default.portable.install_path) }}"
+  install_platform: "{{ portable_install_platform | default(default.portable.install_platform) }}"
+  install_packages: "{{ portable_install_packages | default(default.portable.install_packages) }}"
